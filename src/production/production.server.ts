@@ -134,24 +134,27 @@ export const updateProduction = async (id: string, production: Production): Prom
 
         // If the status is COMPLETED, insert the finished product into the inventory
         if (updatedProduction.status === 'COMPLETED') {
-            await createInventory(updatedProduction);
-        }
-
-        // If the status is COMPLETED, create a finished product
-        if (updatedProduction.status === 'COMPLETED') {
             const finishedProduct = {
                 level: updatedProduction.level,
                 productType: updatedProduction.productType,
                 quantity: updatedProduction.quantity,
                 size: updatedProduction.size,
                 user: {
-                    connect: {
-                        id: updatedProduction.id 
-                    }
+                    connect: { id: updatedProduction.id }
                 }
-                 
             };
+
             await createFinishedProduct(finishedProduct);
+        };
+
+        if (updatedProduction.status === 'COMPLETED') {
+            await createInventory({
+                level: updatedProduction.level,
+                productType: updatedProduction.productType,
+                quantity: updatedProduction.quantity,
+                size: updatedProduction.size,
+                status: 'AVAILABLE'
+            })
         }
 
         return updatedProduction;

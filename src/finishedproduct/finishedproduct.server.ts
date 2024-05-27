@@ -18,7 +18,14 @@ export const getFinishedProducts = async (): Promise<FinishedProduct[]> => {
                 quantity: true,
                 size: true,
                 createdAt: true,
-                updatedAt: true
+                updatedAt: true,
+                user: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true
+                    }
+                }
             },
         });
     } catch (error) {
@@ -39,7 +46,14 @@ export const getFinishedProductById = async (id: string): Promise<FinishedProduc
                 quantity: true,
                 size: true,
                 createdAt: true,
-                updatedAt: true
+                updatedAt: true,
+                user: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true
+                    }
+                }
             },
         });
     } catch (error) {
@@ -51,29 +65,142 @@ export const getFinishedProductById = async (id: string): Promise<FinishedProduc
 //CREATE FINISHED PRODUCT
 export const createFinishedProduct = async (finishedProduct: FinishedProduct): Promise<FinishedProduct> => {
     try {
-        // First, search for an existing finished product item with the same level, productType, and size
         const existingProduct = await prisma.finishedProduct.findFirst({
             where: {
-                level: finishedProduct.level,
                 productType: finishedProduct.productType,
+                level: finishedProduct.level,
                 size: finishedProduct.size,
+            },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true
+                    }
+                }
             }
         });
 
         if (existingProduct) {
-            throw new Error('Finished product already exists');
+            // Update the quantity of the existing product
+            return await prisma.finishedProduct.update({
+                where: {
+                    id: existingProduct.id,
+                },
+                data: {
+                    quantity: finishedProduct.quantity + existingProduct.quantity,
+                },
+            });
+        } else {
+            // Create a new finished product
+            return await prisma.finishedProduct.create({
+                data: {
+                    level: finishedProduct.level,
+                    productType: finishedProduct.productType,
+                    quantity: finishedProduct.quantity,
+                    size: finishedProduct.size,
+                },
+                select: {
+                    id: true,
+                    level: true,
+                    productType: true,
+                    quantity: true,
+                    size: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    user: {
+                        select: {
+                            id: true,
+                            email: true,
+                            name: true
+                        }
+                    }
+                },
+            });
+        }
+    } catch (error) {
+        console.error('Error creating finished product:', error);
+        throw error;
+    }
+}
+
+//UPDATE FINISHED PRODUCT
+export const updateFinishedProduct = async (id: string, finishedProduct: FinishedProduct): Promise<FinishedProduct | null> => {
+    try {
+        const existingProduct = await prisma.finishedProduct.findUnique({
+            where: { id }
+        });
+
+        if (!existingProduct) {
+            return null;
         }
 
-        return await prisma.finishedProduct.create({
+        return await prisma.finishedProduct.update({
+            where: { id },
             data: {
                 level: finishedProduct.level,
                 productType: finishedProduct.productType,
                 quantity: finishedProduct.quantity,
-                size: finishedProduct.size
-            }
+                size: finishedProduct.size,
+            },
+            select: {
+                id: true,
+                level: true,
+                productType: true,
+                quantity: true,
+                size: true,
+                createdAt: true,
+                updatedAt: true,
+                user: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true
+                    }
+                }
+            },
         });
     } catch (error) {
-        console.error('Error creating finished product:', error);
+        console.error('Error updating finished product:', error);
+        throw error;
+    }
+}
+
+//DELETE FINISHED PRODUCT
+export const deleteFinishedProduct = async (id: string): Promise<FinishedProduct | null> => {
+    try {
+        const existingProduct = await prisma.finishedProduct.findUnique({
+            where: { id }
+        });
+
+        if (!existingProduct) {
+            return null;
+        }
+
+        await prisma.finishedProduct.delete({
+            where: { id },
+            select: {
+                id: true,
+                level: true,
+                productType: true,
+                quantity: true,
+                size: true,
+                createdAt: true,
+                updatedAt: true,
+                user: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true
+                    }
+                }
+            },
+        });
+
+        return existingProduct;
+    } catch (error) {
+        console.error('Error deleting finished product:', error);
         throw error;
     }
 }

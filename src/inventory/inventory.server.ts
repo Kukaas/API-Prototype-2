@@ -90,3 +90,34 @@ export const createInventory = async (inventory: Inventory): Promise<Inventory> 
         throw error;
     }
 }
+
+//UPDATE INVENTORY
+export const updateInventory = async (id: string, inventory: Inventory): Promise<Inventory | null> => {
+    try {
+        return await prisma.inventory.update({
+            where: { id },
+            data: {
+                level: inventory.level,
+                productType: inventory.productType,
+                quantity: inventory.quantity,
+                size: inventory.size,
+                status: inventory.status
+            }
+        });
+    } catch (error) {
+        console.error('Error updating inventory:', error);
+        throw error;
+    }
+}
+
+//DELETE INVENTORY
+export const deleteInventory = async (id: string): Promise<Inventory | null> => {
+    try {
+        return await prisma.inventory.delete({
+            where: { id }
+        });
+    } catch (error) {
+        console.error('Error deleting inventory:', error);
+        throw error;
+    }
+}
