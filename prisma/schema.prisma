@@ -84,6 +84,7 @@ model Order {
   id                   String             @id @default(auto()) @map("_id") @db.ObjectId
   studentNumber        String             @unique
   studentName          String
+  contactNumber        String
   gender               String
   status               String
   totalPrice           Int?
