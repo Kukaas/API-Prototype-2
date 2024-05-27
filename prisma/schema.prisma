@@ -86,7 +86,7 @@ model Order {
   studentName          String
   gender               String
   status               String
-  totalPrice           Int
+  totalPrice           Int?
   orderItems           OrderItem[]
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
