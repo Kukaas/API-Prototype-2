@@ -167,16 +167,50 @@ export const updateOrder = async (id: string, order: Order, orderItems: OrderIte
                     });
                 }
             }
-
-            // Delete all orderItems associated with the order
-            await prisma.orderItem.deleteMany({
-                where: {
-                    orderId: id
-                }
-            });
         }
     
         return order;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+// DELETE ORDER
+export const deleteOrder = async (id: string) => {
+    try {
+        // First delete the OrderItem records
+        await prisma.orderItem.deleteMany({
+            where: {
+                orderId: id
+            }
+        });
+
+        // Then delete the Order
+        return await prisma.order.delete({
+            where: {
+                id: id
+            },
+            select: {
+                id: true,
+                studentNumber: true,
+                studentName: true,
+                gender: true,
+                status: true,
+                totalPrice: true,
+                createdAt: true,
+                updatedAt: true,
+                orderItems: {
+                    select: {
+                        level: true,
+                        productType: true,
+                        quantity: true,
+                        size: true,
+                        unitPrice: true,
+                        totalPrice: true,
+                    }
+                }
+            }
+        });
     } catch (error) {
         console.error(error);
     }

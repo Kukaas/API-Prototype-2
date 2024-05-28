@@ -87,3 +87,17 @@ orderRouter.put('/:id', [
         res.status(500).send('Error updating order');
     }
 });
+
+// DELETE ORDER
+orderRouter.delete('/:id', async (req: Request, res: Response) => {
+    try {
+        const deletedOrder = await orderServer.deleteOrder(req.params.id);
+        if (!deletedOrder) {
+            res.status(404).send('Order not found');
+        } else {
+            res.status(200).json(deletedOrder);
+        }
+    } catch (error) {
+        res.status(500).send('Error deleting order');
+    }
+});

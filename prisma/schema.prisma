@@ -21,13 +21,24 @@ model User {
   birthDate     DateTime
   address       String?
   contactNumber String?
-  role          String      @default("EMPLOYE")
+  role          String      @default("EMPLOYEE")
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   productions   Production[]
   finishedProducts FinishedProduct[] // add this line
 }
 
+model Admin {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  email         String      @unique
+  passwordHash  String
+  birthDate     DateTime
+  address       String?
+  contactNumber String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
 
 model Production {
   id                   String             @id @default(auto()) @map("_id") @db.ObjectId
