@@ -1,8 +1,10 @@
+import { generateSalesReport } from './../salesreport/salesreport.server';
 import { prisma } from "../utils/prisma.server";
 
 type Order = {
     studentNumber: string
     studentName: string
+    contactNumber: string
     gender: string
     status: string
     totalPrice?: number
@@ -148,6 +150,7 @@ export const updateOrder = async (id: string, order: Order, orderItems: OrderIte
         });
     
         if (updatedOrder.status === 'CLAIMED') {
+
             for (const item of order.orderItems) {
                 const inventoryItem = await prisma.inventory.findFirst({
                     where: {
@@ -160,10 +163,51 @@ export const updateOrder = async (id: string, order: Order, orderItems: OrderIte
                 if (!inventoryItem) {
                     console.log(`No inventory item found for productType: ${item.productType}, size: ${item.size}, level: ${item.level}`);
                 } else {
+                    // Calculate the new quantity
+                    const newQuantity = inventoryItem.quantity - item.quantity;
+
                     // Update the quantity of the inventory item
                     await prisma.inventory.update({
                         where: { id: inventoryItem.id },
-                        data: { quantity: inventoryItem.quantity - item.quantity }
+                        data: { 
+                            quantity: inventoryItem.quantity - item.quantity,
+                            status: newQuantity === 0 ? 'OUT_OF_STOCK' : 'AVAILABLE'
+                        }
+                    });
+                }
+                // Fetch the most recent sales report for each product type, level, and size
+                const recentReport = await prisma.salesReport.findFirst({
+                    where: {
+                        productType: item.productType,
+                        level: item.level,
+                        size: item.size
+                    },
+                });
+
+                // If a recent report exists, update it
+                if (recentReport) {
+                    // Calculate the new total revenue
+                    const newTotalRevenue = recentReport.totalRevenue + item.totalPrice;
+
+                    // Update the recent report
+                    await prisma.salesReport.update({
+                        where: { id: recentReport.id },
+                        data: { totalRevenue: newTotalRevenue }
+                    });
+                }
+
+                // If no recent report exists, create a new one
+                else {
+                    const totalPrice = item.quantity * item.unitPrice;
+                    // Create a new sales report
+                    await prisma.salesReport.create({
+                        data: {
+                            productType: item.productType,
+                            level: item.level,
+                            size: item.size,
+                            totalRevenue: totalPrice,
+                            salesDate: new Date()
+                        }
                     });
                 }
             }

@@ -94,21 +94,28 @@ export const createInventory = async (inventory: Inventory): Promise<Inventory> 
 //UPDATE INVENTORY
 export const updateInventory = async (id: string, inventory: Inventory): Promise<Inventory | null> => {
     try {
-        // If quantity is 0, set status to 'outofstock' and do not update quantity
+        // Set status to 'OUT_OF_STOCK' if quantity is zero
         if (inventory.quantity === 0) {
             inventory.status = 'OUT_OF_STOCK';
-            throw Error('Quantity is zero, cannot update inventory');
-        } else {
-            return await prisma.inventory.update({
-                where: { id: id },
-                data: {
-                    productType: inventory.productType,
-                    quantity: inventory.quantity,
-                    size: inventory.size,
-                    status: inventory.status
-                }
-            });
         }
+
+        // Update inventory
+        const updatedInventory = await prisma.inventory.update({
+            where: { id: id },
+            data: {
+                productType: inventory.productType,
+                quantity: inventory.quantity,
+                size: inventory.size,
+                status: inventory.status
+            }
+        });
+
+        // Throw error if quantity is zero
+        if (inventory.quantity === 0) {
+            throw Error('Quantity is zero, cannot update inventory');
+        }
+
+        return updatedInventory;
     } catch (error) {
         console.error('Error updating inventory:', error);
         throw error;

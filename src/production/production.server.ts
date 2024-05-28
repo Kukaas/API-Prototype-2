@@ -153,7 +153,7 @@ export const updateProduction = async (id: string, production: Production): Prom
                 productType: updatedProduction.productType,
                 quantity: updatedProduction.quantity,
                 size: updatedProduction.size,
-                status: 'AVAILABLE'
+                status: updatedProduction.quantity > 0 ? 'AVAILABLE' : 'OUT_OF_STOCK'
             })
         }
 

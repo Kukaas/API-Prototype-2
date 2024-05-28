@@ -34,6 +34,7 @@ orderRouter.get('/:id', async (req: Request, res: Response) => {
 orderRouter.post('/', [
     body('studentNumber').isString(),
     body('studentName').isString(),
+    body('contactNumber').isString(),
     body('gender').isString(),
     body('status').isString(),
     body('orderItems').isArray(),
@@ -61,6 +62,7 @@ orderRouter.post('/', [
 orderRouter.put('/:id', [
     body('studentNumber').isString(),
     body('studentName').isString(),
+    body('contactNumber').isString(),
     body('gender').isString(),
     body('status').isString(),
     body('orderItems').isArray(),

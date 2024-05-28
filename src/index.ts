@@ -8,6 +8,7 @@ import { productionRouter } from './production/production.router';
 import { inventoryRouter } from './inventory/inventory.router';
 import { finishedProductRouter } from './finishedproduct/finishedproduct.router';
 import { orderRouter } from './order/order.router';
+import { salesReportRouter } from './salesreport/salesreport.router';
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use('/api/production', productionRouter);
 app.use('/api/finished-product', finishedProductRouter);
 app.use('/api/inventory', inventoryRouter);
 app.use('/api/order', orderRouter);
+app.use('/api/sales-report', salesReportRouter)
 
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
