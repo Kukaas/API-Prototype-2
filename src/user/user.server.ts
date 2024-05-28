@@ -146,3 +146,30 @@ export const deleteUser = async (id: string): Promise<User> => {
         throw error;
     }
 };
+
+//POST to login
+export const login = async (email: string, passwordHash: string): Promise<User | null> => {
+    try {
+        return await prisma.user.findFirst({
+            where: {
+                email,
+                passwordHash
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                passwordHash: true,
+                birthDate: true,
+                address: true,
+                contactNumber: true,
+                role: true,
+                createdAt: true,
+                updatedAt: true
+            }
+        });
+    } catch (error) {
+        console.error('Error logging in:', error);
+        throw error;
+    }
+};

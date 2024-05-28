@@ -1,6 +1,7 @@
 import express from 'express';
 import type {  Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
+import bcrypt from 'bcrypt';
 
 import * as userServer from './user.server';
 
@@ -73,6 +74,10 @@ userRouter.post(
             birthDate,
         };
 
+        //Hash password
+        const saltRounds = 10;
+        user.passwordHash = await bcrypt.hash(user.passwordHash, saltRounds);
+
         try {
             const newUser = await userServer.createUser(user);
             response.json({newUser, message: 'User created successfully'});
@@ -127,3 +132,30 @@ userRouter.delete('/:id', async (request: Request, response: Response) => {
         response.status(500).json({ error: 'Error deleting user' });
     }
 });
+
+//POST login
+userRouter.post(
+    '/login',
+    [
+        body('email').isEmail(),
+        body('passwordHash').isString().notEmpty(),
+    ],
+    async (request: Request, response: Response) => {
+        const errors = validationResult(request);
+        if (!errors.isEmpty()) {
+            response.status(400).json({ errors: errors.array() });
+            return;
+        }
+
+        try {
+            const user = await userServer.login(request.body.email, request.body.passwordHash);
+            if (!user) {
+                response.status(401).json({ error: 'Invalid email or password' });
+                return;
+            }
+            response.json(user);
+        } catch (error) {
+            response.status(500).json({ error: 'Error logging in' });
+        }
+    }
+);
