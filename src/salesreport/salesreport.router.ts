@@ -15,3 +15,33 @@ salesReportRouter.post('/', async (req: Request, res: Response) => {
         res.status(500).send(error);
     }
 });
+
+//GET ALL SALES REPORTS
+salesReportRouter.get('/', async (req: Request, res: Response) => {
+    try {
+        const salesReports = await salesReportServer.getSalesReports();
+        res.status(200).json(salesReports);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+//get sales report by id
+salesReportRouter.get('/:id', async (req: Request, res: Response) => {
+    try {
+        const salesReport = await salesReportServer.getSalesReportById(req.params.id);
+        res.status(200).json(salesReport);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+//DELETE SALES REPORT
+salesReportRouter.delete('/:id', async (req: Request, res: Response) => {
+    try {
+        const salesReport = await salesReportServer.deleteSalesReport(req.params.id);
+        res.status(200).json({salesReport, message: 'Sales report deleted' });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});

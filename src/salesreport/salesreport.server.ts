@@ -76,3 +76,74 @@ export const generateSalesReport = async (productType: string, level: string, si
         throw error;
     }
 }
+
+
+//GET ALL SALES REPORTS
+export const getSalesReports = async (): Promise<SalesReport[]> => {
+    try {
+        const salesReports = await prisma.salesReport.findMany({
+            select: {
+                id: true,
+                level: true,
+                productType: true,
+                salesDate: true,
+                size: true,
+                totalRevenue: true,
+            }
+        });
+        return salesReports;
+    } catch (error) {
+        console.error('Error fetching sales reports:', error);
+        throw error;
+    }
+}
+
+//get sales report by id
+export const getSalesReportById = async (id: string): Promise<SalesReport> => {
+    try {
+        const salesReport = await prisma.salesReport.findUnique({
+            where: { id },
+            select: {
+                id: true,
+                level: true,
+                productType: true,
+                salesDate: true,
+                size: true,
+                totalRevenue: true,
+            }
+        });
+
+        if (!salesReport) {
+            throw Error(`Sales report with ID ${id} not found`);
+        }
+
+        return salesReport;
+    } catch (error) {
+        console.error('Error fetching sales report:', error);
+        throw error;
+    }
+}
+
+//DELETE SALES REPORT BY ID
+export const deleteSalesReport = async (id: string): Promise<void> => {
+    try {
+        const deletedSalesReport = await prisma.salesReport.delete({
+            where: { id },
+            select: {
+                id: true,
+                level: true,
+                productType: true,
+                salesDate: true,
+                size: true,
+                totalRevenue: true,
+            }
+        });
+
+        if (!deletedSalesReport) {
+            throw Error(`Sales report with ID ${id} not found`);
+        }
+    } catch (error) {
+        console.error('Error deleting sales report:', error);
+        throw error;
+    }
+}
