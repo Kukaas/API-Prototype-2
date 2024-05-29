@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
-import express from 'express';
-import cors from 'cors';
+const cors = require('cors');
+const express = require('express');
 
 
 import { userRouter } from './user/user.router';
@@ -10,6 +10,7 @@ import { finishedProductRouter } from './finishedproduct/finishedproduct.router'
 import { orderRouter } from './order/order.router';
 import { salesReportRouter } from './salesreport/salesreport.router';
 import { adminRouter } from './admin/admin.router';
+import { orderItemsRouter } from './orderitems/orderitems.router';
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use('/api/inventory', inventoryRouter);
 app.use('/api/order', orderRouter);
 app.use('/api/sales-report', salesReportRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/order-items', orderItemsRouter);
 
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);

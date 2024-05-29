@@ -124,3 +124,30 @@ adminRouter.put(
         }
     }
 );
+
+//POST to login
+adminRouter.post(
+    '/login',
+    [
+        body('email').isEmail(),
+        body('password').isString().notEmpty() // Change 'passwordHash' to 'password'
+    ],
+    async (request: Request, response: Response) => {
+        const errors = validationResult(request);
+        if (!errors.isEmpty()) {
+            response.status(400).json({ errors: errors.array() });
+            return;
+        }
+
+        try {
+            const admin = await adminServer.adminLogin(request.body.email, request.body.password); // Send plain text password
+            if (!admin) {
+                response.status(401).json({ error: 'Invalid email or password' });
+                return;
+            }
+            response.json(admin);
+        } catch (error) {
+            response.status(500).json({ error: 'Error logging in' });
+        }
+    }
+);

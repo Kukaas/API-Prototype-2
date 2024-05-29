@@ -1,4 +1,5 @@
 import { prisma } from "../utils/prisma.server";
+import bcrypt from 'bcrypt';
 
 type Admin = {
     name: string;
@@ -103,6 +104,41 @@ export const updateAdmin = async (id: string, admin: Admin): Promise<Admin | nul
         });
     } catch (error) {
         console.error('Error updating admin:', error);
+        throw error;
+    }
+}
+
+//Admin Login
+export const adminLogin = async (email: string, password: string): Promise<Admin | null> => {
+    try {
+        const admin = await prisma.admin.findUnique({
+            where: { email },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                passwordHash: true,
+                birthDate: true,
+                address: true,
+                contactNumber: true
+            }
+        });
+
+        if (!admin) {
+            console.log('No admin found'); // Admin not found
+            return null;
+        }
+
+        const passwordMatch = await bcrypt.compare(password, admin.passwordHash);
+
+        if (!passwordMatch) {
+            console.log('Password does not match') // Password does not match
+            return null;
+        }
+
+        return admin;
+    } catch (error) {
+        console.error('Error logging in admin:', error);
         throw error;
     }
 }
