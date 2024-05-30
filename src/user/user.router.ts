@@ -91,14 +91,13 @@ userRouter.post(
 userRouter.put(
     '/:id',
     [
-        body('name').isString().notEmpty(),
-        body('email').isEmail(),
-        body('passwordHash').isString().notEmpty(),
-        body('address').isString().notEmpty(),
-        body('contactNumber').isString().notEmpty(),
-        body('birthDate').isDate(), 
-        body('address').isString().notEmpty(),  
-        body('role').isString().notEmpty(),
+        body('name').isString().optional(),
+        body('email').isEmail().optional(),
+        body('passwordHash').isString().optional(),
+        body('address').isString().optional(),
+        body('contactNumber').isString().optional(),
+        body('birthDate').isDate().optional(), 
+        body('address').isString().optional(),  
     ],
     async (request: Request, response: Response) => {
         const errors = validationResult(request);
