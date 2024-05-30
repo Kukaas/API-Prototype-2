@@ -104,3 +104,16 @@ productionRouter.put('/:id', [
     }
 });
 
+//Delete production
+productionRouter.delete('/:id', async (req: Request, res: Response) => {
+    try {
+        const production = await productionServer.deleteProduction(req.params.id);
+        if (!production) {
+            res.status(404).send('Production not found');
+        } else {
+            res.status(200).json(production);
+        }
+    } catch (error) {
+        res.status(500).send('Error deleting production');
+    }
+});
