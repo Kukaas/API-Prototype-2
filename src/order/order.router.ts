@@ -46,31 +46,34 @@ orderRouter.post('/', [
 ], async (req: Request, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        console.log("Validation Errors: ", errors.array());
         return res.status(400).json({ errors: errors.array() });
     }
 
     const order = req.body;
     try {
+        console.log("Received Order: ", order);
         const newOrder = await orderServer.createOrder(order, order.orderItems);
         res.status(201).json(newOrder);
     } catch (error) {
+        console.error("Error creating order:", error);
         res.status(500).send('Error creating order');
     }
 });
 
 // UPDATE ORDER
 orderRouter.put('/:id', [
-    body('studentNumber').isString(),
-    body('studentName').isString(),
-    body('contactNumber').isString(),
-    body('gender').isString(),
+    body('studentNumber').isString().optional(),
+    body('studentName').isString().optional(),
+    body('contactNumber').isString().optional(),
+    body('gender').isString().optional(),
     body('status').isString(),
-    body('orderItems').isArray(),
-    body('orderItems.*.level').isString(),
-    body('orderItems.*.productType').isString(),
-    body('orderItems.*.quantity').isNumeric(),
-    body('orderItems.*.size').isString(),
-    body('orderItems.*.unitPrice').isNumeric(),
+    body('orderItems').isArray().optional(),
+    body('orderItems.*.level').isString().optional(),
+    body('orderItems.*.productType').isString().optional(),
+    body('orderItems.*.quantity').isNumeric().optional(),
+    body('orderItems.*.size').isString().optional(),
+    body('orderItems.*.unitPrice').isNumeric().optional(),
 ], async (req: Request, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

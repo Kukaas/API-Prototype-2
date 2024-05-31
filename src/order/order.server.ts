@@ -78,6 +78,7 @@ export const getOrderById = async (id: string) => {
 
 
 // CREATE ORDER
+
 export const createOrder = async (order: Order, orderItems: OrderItem[]) => {
     try {
         // Ensure each orderItem has a totalPrice property
@@ -87,6 +88,9 @@ export const createOrder = async (order: Order, orderItems: OrderItem[]) => {
         }));
 
         const totalPrice = itemsWithTotalPrice.reduce((acc, item) => acc + item.totalPrice, 0);
+
+        console.log("Order: ", order);
+        console.log("Order Items: ", itemsWithTotalPrice);
 
         return await prisma.order.create({
             data: {
@@ -118,9 +122,10 @@ export const createOrder = async (order: Order, orderItems: OrderItem[]) => {
             }
         });
     } catch (error) {
-        console.error(error);
+        console.error("Error creating order:", error);
+        throw error;
     }
-}
+};
 
 // UPDATE ORDER
 export const updateOrder = async (id: string, order: Order, orderItems: OrderItem[]) => {
@@ -218,6 +223,7 @@ export const updateOrder = async (id: string, order: Order, orderItems: OrderIte
         console.error(error);
     }
 }
+
 
 // DELETE ORDER
 export const deleteOrder = async (id: string) => {
