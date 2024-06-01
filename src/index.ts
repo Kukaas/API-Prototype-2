@@ -11,6 +11,7 @@ import { orderRouter } from './order/order.router';
 import { salesReportRouter } from './salesreport/salesreport.router';
 import { adminRouter } from './admin/admin.router';
 import { orderItemsRouter } from './orderitems/orderitems.router';
+import { rawMaterialsRouter } from './rawmaterials/rawmaterials.router';
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.use('/api/order', orderRouter);
 app.use('/api/sales-report', salesReportRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/order-items', orderItemsRouter);
+app.use('/api/raw-material-inventory', rawMaterialsRouter);
 
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);

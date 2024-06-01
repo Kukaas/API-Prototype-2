@@ -204,3 +204,31 @@ export const deleteFinishedProduct = async (id: string): Promise<FinishedProduct
         throw error;
     }
 }
+
+//GET Finished Product by User ID
+export const getFinishedProductByUserId = async (userId: string): Promise<FinishedProduct[]> => {
+    try {
+        return await prisma.finishedProduct.findMany({
+            where: { userId },
+            select: {
+                id: true,
+                level: true,
+                productType: true,
+                quantity: true,
+                size: true,
+                createdAt: true,
+                updatedAt: true,
+                user: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true
+                    }
+                }
+            },
+        });
+    } catch (error) {
+        console.error('Error fetching finished products by user ID:', error);
+        throw error;
+    }
+}

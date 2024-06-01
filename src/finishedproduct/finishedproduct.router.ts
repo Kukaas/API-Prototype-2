@@ -71,3 +71,13 @@ finishedProductRouter.delete('/:id', async (req: Request, res: Response) => {
     res.status(404).send('Finished product not found');
   }
 });
+
+//GET finished product by user ID
+finishedProductRouter.get('/user/:id', async (req: Request, res: Response) => {
+  const finishedProduct = await finishedProductServer.getFinishedProductByUserId(req.params.id);
+  if (finishedProduct) {
+    res.json(finishedProduct);
+  } else {
+    res.status(404).send('Finished product not found');
+  }
+});

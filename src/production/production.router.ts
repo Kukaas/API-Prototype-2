@@ -32,12 +32,12 @@ productionRouter.get('/:id', async (req: Request, res: Response) => {
 
 // Create production
 productionRouter.post('/', [
-    body('level').isString(),
-    body('productType').isString(),
-    body('quantity').isNumeric(),
+    body('level').isString().optional(),
+    body('productType').isString().optional(),
+    body('quantity').isNumeric().optional(),
     body('size').isString().optional(),
-    body('status').isString(),
-    body('email').isEmail()
+    body('status').isString().optional(),
+    body('email').isEmail(),
 ], async (req: Request, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -115,5 +115,15 @@ productionRouter.delete('/:id', async (req: Request, res: Response) => {
         }
     } catch (error) {
         res.status(500).send('Error deleting production');
+    }
+});
+
+//GEt production by user ID
+productionRouter.get('/user/:userId', async (req: Request, res: Response) => {
+    try {
+        const productions = await productionServer.getProductionByUserId(req.params.userId);
+        res.status(200).json(productions);
+    } catch (error) {
+        res.status(500).send('Error fetching productions by user ID');
     }
 });
