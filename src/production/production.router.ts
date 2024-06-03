@@ -127,3 +127,14 @@ productionRouter.get('/user/:userId', async (req: Request, res: Response) => {
         res.status(500).send('Error fetching productions by user ID');
     }
 });
+
+//GET production by User name
+productionRouter.get('/name/:name', async (req: Request, res: Response) => {
+    try {
+        const productions = await productionServer.getProductionByUserName(req.params.name);
+        res.status(200).json(productions);
+    } catch (error) {
+  console.error('Error fetching productions by user name:', error);
+  res.status(500).send('Error fetching productions by user name');
+}
+});

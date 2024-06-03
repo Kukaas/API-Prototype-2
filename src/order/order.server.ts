@@ -265,3 +265,67 @@ export const deleteOrder = async (id: string) => {
         console.error(error);
     }
 }
+
+//Get order By Student Number
+export const getOrderByStudentNumber = async (studentNumber: string) => {
+    return await prisma.order.findMany({
+        where: {
+            studentNumber: {
+                equals: studentNumber,
+                mode: 'insensitive'
+            }
+        },
+        select: {
+            id: true,
+            studentNumber: true,
+            studentName: true,
+            gender: true,
+            status: true,
+            totalPrice: true,
+            createdAt: true,
+            updatedAt: true,
+            orderItems: {
+                select: {
+                    level: true,
+                    productType: true,
+                    quantity: true,
+                    size: true,
+                    unitPrice: true,
+                    totalPrice: true,
+                }
+            }
+        },
+    });
+}
+
+//Get Student by Student name
+export const getOrderByStudentName = async (studentName: string) => {
+    return await prisma.order.findMany({
+        where: {
+            studentName: {
+                equals: studentName,
+                mode: 'insensitive'
+            }
+        },
+        select: {
+            id: true,
+            studentNumber: true,
+            studentName: true,
+            gender: true,
+            status: true,
+            totalPrice: true,
+            createdAt: true,
+            updatedAt: true,
+            orderItems: {
+                select: {
+                    level: true,
+                    productType: true,
+                    quantity: true,
+                    size: true,
+                    unitPrice: true,
+                    totalPrice: true,
+                }
+            }
+        },
+    });
+}

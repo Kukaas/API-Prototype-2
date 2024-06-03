@@ -106,3 +106,31 @@ orderRouter.delete('/:id', async (req: Request, res: Response) => {
         res.status(500).send('Error deleting order');
     }
 });
+
+//Get order by student number
+orderRouter.get('/student/:studentNumber', async (req: Request, res: Response) => {
+    try {
+        const order = await orderServer.getOrderByStudentNumber(req.params.studentNumber);
+        if (!order) {
+            res.status(404).send('Order not found');
+        } else {
+            res.status(200).json(order);
+        }
+    } catch (error) {
+        res.status(500).send('Error fetching order by Student Number');
+    }
+});
+
+//Get order by student name
+orderRouter.get('/student/:studentName', async (req: Request, res: Response) => {
+    try {
+        const order = await orderServer.getOrderByStudentName(req.params.studentName);
+        if (!order) {
+            res.status(404).send('Order not found');
+        } else {
+            res.status(200).json(order);
+        }
+    } catch (error) {
+        res.status(500).send('Error fetching order by Student Name');
+    }
+});

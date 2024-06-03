@@ -220,3 +220,40 @@ export const getProductionByUserId = async (userId: string): Promise<Production[
         throw error;
     }
 }
+
+//GET Production by User name
+export const getProductionByUserName = async (name: string): Promise<Production[]> => {
+    try {
+        return await prisma.production.findMany({
+            where: { 
+                user: { 
+                    name : {
+                        startsWith: name,
+                        mode: 'insensitive'
+                    }
+                } 
+            },
+            select: {
+                id: true,
+                level: true,
+                productType: true,
+                quantity: true,
+                size: true,
+                status: true,
+                productionStartTime: true,
+                createdAt: true,
+                updatedAt: true,
+                user: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true
+                    }
+                },
+            },
+        });
+    } catch (error) {
+        console.error('Error fetching production by user name:', error);
+        throw error;
+    }
+}
